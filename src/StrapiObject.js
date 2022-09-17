@@ -32,7 +32,7 @@ module.exports = class StrapiObject {
 
 	/**
 	 * Convert data from DataBase (URI)
-	 * @param {Object} value 
+	 * @param {Object} value default value will be this
 	 * @returns {Object}
 	 */
 	changeFromDB(value) {
@@ -52,7 +52,7 @@ module.exports = class StrapiObject {
 
 	/**
 	 * Convert data to DataBase format (URI)
-	 * @param {Object} value 
+	 * @param {Object} value default value will be this
 	 * @returns {Object}
 	 */
 	changeToDB(value) {
