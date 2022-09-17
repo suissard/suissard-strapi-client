@@ -31,9 +31,9 @@ module.exports = class StrapiObject {
 	}
 
 	/**
-	 * Transforme les données
-	 * @param {*} value 
-	 * @returns 
+	 * Convert data from DataBase (URI)
+	 * @param {Object} value 
+	 * @returns {Object}
 	 */
 	changeFromDB(value) {
 		let decodeURIObject = function (obj, target = {}) {
@@ -50,6 +50,11 @@ module.exports = class StrapiObject {
 		return decodeURIObject(value || this);
 	}
 
+	/**
+	 * Convert data to DataBase format (URI)
+	 * @param {Object} value 
+	 * @returns {Object}
+	 */
 	changeToDB(value) {
 		let encodeURIObject = function (obj, target = {}) {
 			for (let i in obj) {
