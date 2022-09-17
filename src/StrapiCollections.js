@@ -1,10 +1,11 @@
 const StrapiObject = require("./StrapiObject");
+const StrapiCache = require("./StrapiCache");
 
 module.exports = class StrapiCollection {
 	constructor(name, api) {
 		this.api = api;
 		this.name = name;
-		this.cache = new Map();
+		this.cache = new StrapiCache();
 	}
 
 	/**
