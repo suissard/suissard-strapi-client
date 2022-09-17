@@ -12,7 +12,6 @@ module.exports = class StrapiApi {
 
 		this.axios = axios.create();
 		this.logRequest = {};
-		console.log("📁 Strapi instanciés : " + collections.join(", "));
 	}
 
 	/**
@@ -164,10 +163,10 @@ module.exports = class StrapiApi {
 
 	/**
 	 * Requete de registration d'un utilisateur
-	 * @param {String} username 
-	 * @param {String} email 
-	 * @param {String} password 
-	 * @returns 
+	 * @param {String} username
+	 * @param {String} email
+	 * @param {String} password
+	 * @returns
 	 */
 	register(username, email, password) {
 		return this.POST("auth/local/register", {
@@ -179,9 +178,9 @@ module.exports = class StrapiApi {
 
 	/**
 	 * Requete de login d'un utilisateur qui ajoute le token renvoyé
-	 * @param {*} identifier 
-	 * @param {*} password 
-	 * @returns 
+	 * @param {*} identifier
+	 * @param {*} password
+	 * @returns
 	 */
 	login(identifier, password) {
 		return this.request("api/auth/local", "POST", {

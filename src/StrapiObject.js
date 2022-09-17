@@ -16,6 +16,7 @@ module.exports = class StrapiObject {
 			enumerable: false, value: () => collection
 		});
 
+		value = this.changeFromDB(value);
 		for (let i in value) this[i] = value[i];
 	}
 
@@ -27,5 +28,40 @@ module.exports = class StrapiObject {
 	}
 	refresh() {
 		return this.getCollection().get(this.getID(), true);
+	}
+
+	/**
+	 * Transforme les données
+	 * @param {*} value 
+	 * @returns 
+	 */
+	changeFromDB(value) {
+		let decodeURIObject = function (obj, target = {}) {
+			for (let i in obj) {
+				let indexTarget = typeof i == "string" ? decodeURIComponent(i) : i;
+				if (obj[i] instanceof Object) target[indexTarget] = decodeURIObject(obj[i]);
+				else if (typeof obj[i] == "string")
+					target[indexTarget] = decodeURIComponent(obj[i]);
+				else target[indexTarget] = obj[i];
+			}
+			return target;
+		};
+
+		return decodeURIObject(value || this);
+	}
+
+	changeToDB(value) {
+		let encodeURIObject = function (obj, target = {}) {
+			for (let i in obj) {
+				let indexTarget = typeof i == "string" ? encodeURIComponent(i) : i;
+				if (obj[i] instanceof Object) target[indexTarget] = encodeURIObject(obj[i]);
+				else if (typeof obj[i] == "string")
+					target[indexTarget] = encodeURIComponent(obj[i]);
+				else target[indexTarget] = obj[i];
+			}
+			return target;
+		};
+
+		return encodeURIObject(value || this);
 	}
 };

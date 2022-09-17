@@ -1,4 +1,17 @@
 {
+  "name": "suissard-strapi-client",
+  "version": "1.0.1",
+  "description": "",
+  "main": "index.js",
+
+  "keywords": ["strapi", "data"],
+  "author": "@suissard <clavier.jeremy@gmail.com>",
+  "license": "CC0 1.0 Universal",
+
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/suissard/strapi-client.git"
+  },
   "scripts": {
     "test": "vitest --globals"
   },
