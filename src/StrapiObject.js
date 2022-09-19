@@ -36,7 +36,10 @@ module.exports = class StrapiObject {
 	 * @returns {Object}
 	 */
 	changeFromDB(value) {
-		let decodeURIObject = function (obj, target = {}) {
+		let decodeURIObject = function (obj) {
+			let target = {};
+			if (obj instanceof Array) target = []
+
 			for (let i in obj) {
 				let indexTarget = typeof i == "string" ? decodeURIComponent(i) : i;
 				if (obj[i] instanceof Object) target[indexTarget] = decodeURIObject(obj[i]);
@@ -56,7 +59,10 @@ module.exports = class StrapiObject {
 	 * @returns {Object}
 	 */
 	changeToDB(value) {
-		let encodeURIObject = function (obj, target = {}) {
+		let encodeURIObject = function (obj) {
+			let target = {};
+			if (obj instanceof Array) target = []
+
 			for (let i in obj) {
 				let indexTarget = typeof i == "string" ? encodeURIComponent(i) : i;
 				if (obj[i] instanceof Object) target[indexTarget] = encodeURIObject(obj[i]);
