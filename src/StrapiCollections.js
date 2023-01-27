@@ -111,11 +111,18 @@ module.exports = class StrapiCollection {
 		});
 	}
 
+	compareEntries(obj, entries) {
+		for (let i in entries) {
+			if (obj[i] !== entries[i]) return false;
+		}
+		return true;
+	}
+
 	update(id, body) {
 		let url = this.api.setUrl(`${this.name}/${id}`);
 		return this.api.PUT(url, body).then((response) => {
 			let obj = this.cache.get(String(id));
-			if (obj) obj; //.update();
+			if (!this.compareEntries(obj, body)) obj.update(body);
 			else {
 				obj = new StrapiObject(
 					response?.data.data.id,

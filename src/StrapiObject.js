@@ -21,6 +21,7 @@ module.exports = class StrapiObject {
 	}
 
 	update(data) {
+		for (let i in data) this[i] = data[i];
 		return this.getCollection().update(this.getID(), data);
 	}
 	delete() {

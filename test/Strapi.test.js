@@ -32,8 +32,21 @@ test("getHeader", () => {
 });
 
 test("requests post, get, update, delete", async () => {
+	const createObjectData = function(object, prefix="created"){
+		if (!object) return {}
+		let newObject = JSON.parse(JSON.stringify(object))
+		for (let prop in newObject){
+			let entrie = newObject[prop]
+			if (typeof entrie == 'number') newObject[prop] = 9999 
+			else if (typeof entrie == 'string') newObject[prop] = `${prefix}${prop}` 
+			else if (typeof entrie == 'array') newObject[prop] = [`${prefix}${prop}`] 
+			else if (typeof entrie == 'object') newObject[prop] = {[prefix+prop]: `${prefix}${prop}`} 
+		}
+		return newObject
+	}
+	
 	//GET
-	const collection = strapi.collections[collections[0]];
+	const collection = strapi.collections[collections[0]];	
 
 	const configObject = {
 		token: "token",
@@ -43,7 +56,17 @@ test("requests post, get, update, delete", async () => {
 		active: false,
 	};
 
+	
 	const modifiedName = "test à modifier";
+	const modifiedToken = "test à modifier";
+
+	//compareEntries
+	const object1 = { test1: 'test1', test2: 'test2' }
+	const entries = { test2: 'test2' }
+	expect(collection.compareEntries(object1, entries)).toBeTruthy()
+	expect(collection.compareEntries(object1, { test2: 'test3' })).toBeFalsy()
+	expect(collection.compareEntries(object1, { test3: 'test3' })).toBeFalsy()
+
 
 	// Creer un objet	
 	const createdObject = await collection.create(configObject);
@@ -72,16 +95,20 @@ test("requests post, get, update, delete", async () => {
 
 
 	// Modifier un objet
-	await collection.update(createdObjectFromList.getID(), {name: modifiedName})
+	let updatedObject = await collection.update(createdObjectFromList.getID(), {name: modifiedName, token: modifiedToken})
+	expect(updatedObject.name).toBe(modifiedName);
+	expect(updatedObject.token).toBe(modifiedToken);
+
 	const modifiedObject = await collection.get(createdObjectFromList.getID(), undefined, true);
 	expect(modifiedObject.name).toBe(modifiedName);
+	expect(modifiedObject.token).toBe(modifiedToken);
 
 
 	// Supprimer un objet
 	await collection.delete(modifiedObject.getID());
 	const collectionListWithoutcreatedObjectFromList = await collection.list(undefined, undefined, undefined, true)
 	expect(collectionListWithoutcreatedObjectFromList.find((element)=>element.getID() == modifiedObject.getID())).toBeFalsy();
-});
+}, 10000);
 
 test("GetAllData", async ()=>{
 	const allData = await strapi.getAllData();
@@ -90,7 +117,7 @@ test("GetAllData", async ()=>{
 		return Object.keys(coll).join(",") == collections.join(",");
 	});
 	// expect(allData[collections[0]][0]).toBeInstanceOf(StrapiObject);
-},10000)
+},15000)
 
 
 // TODO protocole de test
