@@ -1,300 +1,186 @@
-# strapi-client-js
+# Strapi API Client for JavaScript
 
-Javascript client for Strapi Rest API.
+A simple and lightweight JavaScript client for the Strapi REST API. This client helps you interact with your Strapi backend, handling authentication, collections, and content management.
+
+## Features
+
+- **Authentication**: Easy-to-use methods for user registration, login, and password management.
+- **CRUD Operations**: Simple interface for creating, reading, updating, and deleting content.
+- **Collection Management**: Automatically fetches and sets up your Strapi collections.
+- **Promise-based**: All API calls return Promises for easy use with async/await.
+- **Built-in Caching**: Caches GET requests to reduce redundant API calls.
 
 ## Installation
 
+You can install the client using npm or yarn:
+
 ```bash
-npm i @kmariappan/strapi-client-js
-
-npm i axios qs
-
- or
-
-yarn add @kmariappan/strapi-client-js
-
-yarn add axios qs
-
+npm install axios qs
 ```
 
-## Peer Dependencies
+> This library is not on npm yet. You need to include the files in your project manually for now. You also need to install the peer dependencies `axios` and `qs`.
 
-This package uses [axios](https://axios-http.com/) as a http client and [qs](https://github.com/ljharb/qs) for parsing and stringifying the Query.
+## Usage
 
-### Create Client Options
+First, you need to create an instance of the `StrapiApi` client.
 
-```ts
-// Typescript
+```javascript
+const StrapiApi = require('./src/StrapiApi'); // Adjust the path to the file
 
-import { createClient, StrapiClientOptions } from '@kmariappan/strapi-client-js';
+const strapi = new StrapiApi('http://localhost:1337');
 
-const options: StrapiClientOptions = {
-  url: 'http://localhost:1337/api',
-  apiToken: '', // Built in API token,
-  normalizeData: true, // Normalize Unified response Format. default - true
-  headers: {}, // Custom Headers
-  persistSession: false, // Persist authenticated token in browser local storage. default -false
-};
-
-const strapiClient = createClient(options);
+// You can also specify collections, an auth token, and a different API prefix
+// const strapi = new StrapiApi('http://localhost:1337', ['articles', 'categories'], 'your-jwt-token', 'api');
 ```
 
-# REST API
+Once the client is initialized, it will automatically fetch the available collections from your Strapi instance. You can access them as properties on the `strapi.collections` object.
 
-## Get
+### Authentication
 
-```js
-import { createClient } from '@kmariappan/strapi-client-js';
+The client provides several methods for handling user authentication.
 
-const strapiClient = createClient({ url: 'http://localhost:1337/api' });
+#### Register a new user
 
-const run = async () => {
-  const { data, error, meta } = await strapiClient
-    .from('students')
-    // .from<Student>("students") ** typescript **
-    .select(['firstname', 'lastname']) // Select only specific fields.
-    // .select(["firstname", "lastname"]) ** typescript **
-    .get();
-
-  if (error) {
-    console.log(error);
-  } else {
-    console.log(data);
-    console.log(meta);
+```javascript
+async function registerUser() {
+  try {
+    const user = await strapi.register('my-username', 'user@example.com', 'password123');
+    console.log('Registered user:', user);
+  } catch (error) {
+    console.error('Registration failed:', error);
   }
-};
-
-run();
+}
 ```
 
-Retrieve many entries by ids
+#### Log in a user
 
-```ts
-const { data, error, meta } = await strapiClient.from('students').selectManyByID([200, 240]).get();
+```javascript
+async function loginUser() {
+  try {
+    const { user, jwt } = await strapi.login('user@example.com', 'password123');
+    console.log('Logged in user:', user);
+    console.log('JWT:', jwt);
+    // The client automatically stores the JWT for subsequent requests.
+  } catch (error) {
+    console.error('Login failed:', error);
+  }
+}
 ```
 
-### Filter Methods
+#### Get the current user
 
-```ts
-const { data, error, meta } = await strapiClient
-  .from<Student>('students')
-  .select(['firstname', 'lastname'])
-  .equalTo('id', 2)
-  .get();
+If a user is logged in, you can retrieve their information.
+
+```javascript
+async function getCurrentUser() {
+  try {
+    const user = await strapi.getMe();
+    console.log('Current user:', user);
+  } catch (error) {
+    console.error('Failed to get user:', error);
+  }
+}
 ```
 
-```ts
-const { data, error, meta } = await strapiClient
-  .from<Student>('students')
-  .select(['firstname', 'lastname'])
-  .between('id', [40, 45])
-  .get();
+#### Password Reset
+
+```javascript
+// Request a password reset email
+await strapi.forgotPassword('user@example.com');
+
+// Reset the password using the code from the email
+await strapi.resetPassword('reset-code', 'new-password', 'new-password');
 ```
 
-### All filter Methods
+#### Sign Out
 
-```js
-equalTo();
-notEqualTo();
-lessThan();
-lessThanOrEqualTo();
-greaterThan();
-greaterThanOrEqualTo();
-containsCaseSensitive();
-notContainsCaseSensitive();
-contains();
-notContains();
-isNull();
-isNotNull();
-between();
-startsWith();
-endsWith();
+To sign out, simply call the `signOut` method. This will clear the token from the client instance.
+
+```javascript
+strapi.signOut();
 ```
 
-### Filter Deep
+### Working with Collections
 
-@param path - as string by relation <br />
-@param Operator "eq" | "ne" | "lt" | "gt" | "lte" | "gte" | "in" | "notIn" | "contains" | "notContains" | "startsWith" | "endsWith" <br />
-@param values can be string, number or array
+Once the `strapi` object is initialized, you can access your collections through `strapi.collections`. For example, if you have a collection named `articles`, you can access it at `strapi.collections.articles`.
 
-```ts
-const { data, error, meta } = await strapiClient
-  .from<Student>('students')
-  .select(['firstname', 'lastname'])
-  .filterDeep('address.city', 'eq', 'Munich')
-  .get();
+#### Get a list of entries
+
+```javascript
+async function getArticles() {
+  try {
+    const articles = await strapi.collections.articles.list();
+    console.log('Articles:', articles);
+  } catch (error) {
+    console.error('Failed to get articles:', error);
+  }
+}
 ```
 
-### Sort
+You can also filter, sort, and populate the results.
 
-Expects an array with the field and order example - [{ field: 'id', order: 'asc' }]
-
-```ts
-const { data, error, meta } = await strapiClient
-  .from<Student>('students')
-  .select(['firstname', 'lastname'])
-  .between('id', [40, 45])
-  .sortBy([{ field: 'id', order: 'desc' }])
-  .get();
+```javascript
+// Get all articles, populate the 'author' and 'category' fields
+const articles = await strapi.collections.articles.list(
+  { title: { $eq: 'Hello World' } }, // filters
+  ['title', 'content'], // fields
+  ['author', 'category'] // populate
+);
 ```
 
-### Publication State
+#### Get a single entry
 
-Returns both draft entries & published entries.
-
-```ts
-const { data, error, meta } = await strapiClient
-  .from<Student>('students')
-  .select(['firstname', 'lastname'])
-  .withDraft()
-  .get();
+```javascript
+async function getArticle(id) {
+  try {
+    const article = await strapi.collections.articles.get(id);
+    console.log('Article:', article);
+  } catch (error) {
+    console.error('Failed to get article:', error);
+  }
+}
 ```
 
-Returns only draft entries.
+#### Create an entry
 
-```ts
-const { data, error, meta } = await strapiClient
-  .from<Student>('students')
-  .select(['firstname', 'lastname'])
-  .onlyDraft()
-  .get();
+```javascript
+async function createArticle() {
+  try {
+    const newArticle = await strapi.collections.articles.create({
+      title: 'My New Article',
+      content: 'This is the content of the article.',
+    });
+    console.log('Created article:', newArticle);
+  } catch (error) {
+    console.error('Failed to create article:', error);
+  }
+}
 ```
 
-### Locale
+#### Update an entry
 
-Get entries from a specific locale.
-
-```ts
-const { data, error, meta } = await strapiClient
-  .from<Student>('students')
-  .select(['firstname', 'lastname'])
-  .setLocale('de')
-  .get();
+```javascript
+async function updateArticle(id) {
+  try {
+    const updatedArticle = await strapi.collections.articles.update(id, {
+      title: 'My Updated Article Title',
+    });
+    console.log('Updated article:', updatedArticle);
+  } catch (error) {
+    console.error('Failed to update article:', error);
+  }
+}
 ```
 
-### Pagination
+#### Delete an entry
 
-To paginate results by page
-
-```ts
-const { data, error, meta } = await strapiClient
-  .from<Student>('students')
-  .select(['firstname', 'lastname'])
-  .paginate(1, 15)
-  .get();
+```javascript
+async function deleteArticle(id) {
+  try {
+    await strapi.collections.articles.delete(id);
+    console.log('Article deleted successfully.');
+  } catch (error) {
+    console.error('Failed to delete article:', error);
+  }
+}
 ```
-
-To paginate results by offset
-
-```ts
-const { data, error, meta } = await strapiClient
-  .from<Student>('students')
-  .select(['firstname', 'lastname'])
-  .paginateByOffset(0, 25)
-  .get();
-```
-
-### Populate
-
-Populate 1 level for all relations
-
-```ts
-const { data, error, meta } = await strapiClient
-  .from<Student>('students')
-  .select(['firstname', 'lastname'])
-  .populate()
-  .get();
-```
-
-Populate 2 levels
-
-```ts
-const { data, error, meta } = await strapiClient
-  .from<Student>('students')
-  .select(['firstname', 'lastname'])
-  .populateWith<Address>('address', ['id', 'city'], true)
-  .get();
-```
-
-Populate Deep
-
-```ts
-const { data, error, meta } = await strapiClient
-  .from<Student>('students')
-  .select(['firstname', 'lastname'])
-  .populateDeep([
-    {
-      path: 'address',
-      fields: ['id', 'string'],
-      children: [{ key: 'country', fields: ['id', 'name'] }],
-    },
-  ])
-  .get();
-```
-
-# Post
-
-Create single record
-
-```ts
-const { data, error, meta } = await strapiClient
-  .from('students')
-  .create({ firstname: 'Vorname', lastname: 'Nachname' });
-```
-
-Create Many records
-
-```ts
-const { success } = await strapiClient.from('students').createMany([
-  { firstname: 'muster', lastname: 'muster' },
-  { firstname: 'muster1', lastname: 'muster1' },
-]);
-```
-
-### Available Post Methods
-
-```ts
-update();
-updateMany();
-deleteOne();
-deleteMany();
-```
-
-# Auth
-
-signup new user
-
-```ts
-  const { data, error } = await strapiClient.auth.signUp({
-    username: 'username',
-    email: 'name@gmail.com',
-    password: '12345678',
-  });
-```
-
-signin user
-
-```ts
-  const { data, error } = await strapiClient.auth.signIn({    
-    email: 'name@gmail.com',
-    password: '12345678',
-  });
-```
-signout user - removes the authentication token if saved in localstorage
-
-```ts
-  const { error } = await strapiClient.auth.signOut();  
-```
-
-# Misc
-
-Get url from the client Object
-
-```ts
-  const url = strapiClient.getApiUrl();
-
-  console.log(url);
-
-```
-
-

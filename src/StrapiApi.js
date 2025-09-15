@@ -183,12 +183,55 @@ module.exports = class StrapiApi {
 	 * @returns
 	 */
 	login(identifier, password) {
-		return this.request("api/auth/local", "POST", {
+		return this.request(this.prefix + "auth/local", "POST", {
 			identifier,
 			password,
 		}).then((response) => {
-			this.token = response.data.jwt;
-			return response.data;
+			if (response?.data?.jwt) {
+				this.setToken(response.data.jwt);
+			}
+			return response?.data;
 		});
+	}
+
+	/**
+	 * Déconnecte l'utilisateur en supprimant le token
+	 */
+	signOut() {
+		this.setToken(undefined);
+	}
+
+	/**
+	 * Demande de réinitialisation du mot de passe
+	 * @param {String} email
+	 * @returns
+	 */
+	forgotPassword(email) {
+		return this.POST("auth/forgot-password", {
+			email,
+		});
+	}
+
+	/**
+	 * Réinitialise le mot de passe de l'utilisateur
+	 * @param {String} code
+	 * @param {String} password
+	 * @param {String} passwordConfirmation
+	 * @returns
+	 */
+	resetPassword(code, password, passwordConfirmation) {
+		return this.POST("auth/reset-password", {
+			code,
+			password,
+			passwordConfirmation,
+		});
+	}
+
+	/**
+	 * Récupère les informations de l'utilisateur actuellement authentifié
+	 * @returns
+	 */
+	getMe() {
+		return this.GET("users/me");
 	}
 };
