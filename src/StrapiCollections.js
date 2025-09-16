@@ -87,11 +87,11 @@ module.exports = class StrapiCollection {
 	create(body) {
 		let url = this.api.setUrl(`${this.name}`);
 		return this.api.POST(url, body).then((response) => {
-			if (!response) return
+			if (!response?.data?.data) return;
 			let obj = new StrapiObject(
-				String(response?.data.data.id),
+				String(response.data.data.id),
 				this.name,
-				response?.data.data.attributes,
+				response.data.data.attributes,
 				this
 			);
 			this.cache.set(obj.getID(), obj);
@@ -102,12 +102,17 @@ module.exports = class StrapiCollection {
 	delete(id) {
 		let url = this.api.setUrl(`${this.name}/${id}`);
 		return this.api.DELETE(url).then((response) => {
+			if (!response?.data?.data) return;
 			let obj = this.cache.get(String(id));
 			if (obj) {
-				obj; //.delete();
 				this.cache.delete(id);
 			}
-			return response?.data.data.attributes;
+			return new StrapiObject(
+				response.data.data.id,
+				this.name,
+				response.data.data.attributes,
+				this
+			);
 		});
 	}
 
@@ -121,13 +126,15 @@ module.exports = class StrapiCollection {
 	update(id, body) {
 		let url = this.api.setUrl(`${this.name}/${id}`);
 		return this.api.PUT(url, body).then((response) => {
+			if (!response?.data?.data) return;
 			let obj = this.cache.get(String(id));
-			if (!this.compareEntries(obj, body)) obj.update(body);
-			else {
+			if (obj && !this.compareEntries(obj, body)) {
+				obj.update(body);
+			} else {
 				obj = new StrapiObject(
-					response?.data.data.id,
+					response.data.data.id,
 					this.name,
-					response?.data.data.attributes,
+					response.data.data.attributes,
 					this
 				);
 				this.cache.set(obj.getID(), obj);
