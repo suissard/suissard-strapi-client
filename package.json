@@ -1,13 +1,12 @@
-
-
 {
   "name": "suissard-strapi-client",
   "version": "1.0.7",
   "description": "",
-  
-  "keywords": ["strapi", "data"],
+  "keywords": [
+    "strapi",
+    "data"
+  ],
   "author": "@suissard <clavier.jeremy@gmail.com>",
-  
   "main": "dist/strapi-client.js",
   "module": "dist/strapi-client.mjs",
   "typings": "dist/strapi-client.d.ts",
@@ -28,7 +27,8 @@
     "lint": "eslint  . --ext .ts",
     "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "semantic-release": "semantic-release --branches main",
-    "commit": "git-cz"
+    "commit": "git-cz",
+    "test": "vitest"
   },
   "husky": {
     "hooks": {
@@ -40,7 +40,7 @@
     "qs": "^6.10.3"
   },
   "devDependencies": {
-    "@types/node": "^16.9.4",
+    "@types/node": "^18.19.124",
     "@types/qs": "^6.9.7",
     "@typescript-eslint/eslint-plugin": "^5.12.1",
     "@typescript-eslint/parser": "^5.12.1",
@@ -61,7 +61,8 @@
     "rollup-plugin-esbuild": "^4.8.2",
     "semantic-release": "^19.0.2",
     "ts-node": "^10.2.1",
-    "typescript": "^4.4.3"
+    "typescript": "^4.4.3",
+    "vitest": "^3.2.4"
   },
   "config": {
     "commitizen": {
@@ -71,6 +72,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/kmariappan/strapi-client-js.git"
-  },
-  "dependencies": {}
+  }
 }
