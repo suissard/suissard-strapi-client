@@ -1,7 +1,15 @@
 /**
- * Object fournit par la base de donnée Strapi
+ * @class StrapiObject
+ * @description Classe représentant un objet de la base de données Strapi.
  */
 module.exports = class StrapiObject {
+	/**
+	 * @constructor
+	 * @param {string} id - L'ID de l'objet.
+	 * @param {string} type - Le type de l'objet (nom de la collection).
+	 * @param {Object} value - Les attributs de l'objet.
+	 * @param {StrapiCollection} collection - L'instance de la collection parente.
+	 */
 	constructor(id, type, value, collection) {
 		// console.log('StrapiObject', 'id : ' + id, 'type : ' + type, value)
 		Object.defineProperty(this, "getID", {
@@ -20,21 +28,37 @@ module.exports = class StrapiObject {
 		for (let i in value) this[i] = value[i];
 	}
 
+	/**
+	 * Met à jour l'objet avec de nouvelles données.
+	 * @param {Object} data - Les nouvelles données.
+	 * @returns {Promise<StrapiObject>} Une promesse qui résout avec l'objet mis à jour.
+	 */
 	update(data) {
 		for (let i in data) this[i] = data[i];
 		return this.getCollection().update(this.getID(), data);
 	}
+
+	/**
+	 * Supprime l'objet de la base de données.
+	 * @returns {Promise<StrapiObject>} Une promesse qui résout avec l'objet supprimé.
+	 */
 	delete() {
 		return this.getCollection().delete(this.getID());
 	}
+
+	/**
+	 * Rafraîchit les données de l'objet depuis la base de données.
+	 * @returns {Promise<StrapiObject>} Une promesse qui résout avec l'objet rafraîchi.
+	 */
 	refresh() {
 		return this.getCollection().get(this.getID(), true);
 	}
 
 	/**
-	 * Convert data from DataBase (URI)
-	 * @param {Object} value default value will be this
-	 * @returns {Object}
+	 * Convertit les données de la base de données (décode les URI).
+	 * @param {Object} [value=this] - L'objet à convertir.
+	 * @returns {Object} L'objet converti.
+	 * @private
 	 */
 	changeFromDB(value) {
 		let decodeURIObject = function (obj) {
@@ -55,9 +79,10 @@ module.exports = class StrapiObject {
 	}
 
 	/**
-	 * Convert data to DataBase format (URI)
-	 * @param {Object} value default value will be this
-	 * @returns {Object}
+	 * Convertit les données au format de la base de données (encode les URI).
+	 * @param {Object} [value=this] - L'objet à convertir.
+	 * @returns {Object} L'objet converti.
+	 * @private
 	 */
 	changeToDB(value) {
 		let encodeURIObject = function (obj) {

@@ -1,7 +1,16 @@
 const StrapiObject = require("./StrapiObject");
 const StrapiCache = require("./StrapiCache");
 
+/**
+ * @class StrapiCollection
+ * @description Classe pour gérer les opérations sur une collection Strapi.
+ */
 module.exports = class StrapiCollection {
+	/**
+	 * @constructor
+	 * @param {string} name - Le nom de la collection.
+	 * @param {StrapiApi} api - L'instance de la classe StrapiApi.
+	 */
 	constructor(name, api) {
 		this.api = api;
 		this.name = name;
@@ -9,29 +18,13 @@ module.exports = class StrapiCollection {
 	}
 
 	/**
-	 * https://docs.strapi.io/developer-docs/latest/developer-resources/database-apis-reference/rest/filtering-locale-publication.html#filtering
-	 * @param {Object} filter exemple : {title:{$eq:'Mon deuxieme article'}}
-	 * $eq	Equal
-	 * $ne	Not equal
-	 * $lt	Less than
-	 * $lte	Less than or equal to
-	 * $gt	Greater than
-	 * $gte	Greater than or equal to
-	 * $in	Included in an array
-	 * $notIn	Not included in an array
-	 * $contains	Contains (case-sensitive)
-	 * $notContains	Does not contain (case-sensitive)
-	 * $containsi	Contains
-	 * $notContainsi	Does not contain
-	 * $null	Is null
-	 * $notNull	Is not null
-	 * $between	Is between
-	 * $startsWith	Starts with
-	 * $endsWith	Ends with
-	 * $or	Joins the filters in an "or" expression
-	 * $and	Joins the filters in an "and" expression
-	 * @param {Array} fields entree qui doivent apparaitre
-	 * @param {Array} populate Enrichir avec les objets liés (default = oui). https://docs.strapi.io/developer-docs/latest/developer-resources/database-apis-reference/entity-service/populate.html
+	 * Récupère une liste d'éléments de la collection.
+	 * @see https://docs.strapi.io/developer-docs/latest/developer-resources/database-apis-reference/rest/filtering-locale-publication.html#filtering
+	 * @param {Object} [filters] - Les filtres à appliquer. Exemple : `{title:{$eq:'Mon deuxieme article'}}`
+	 * @param {Array<string>} [fields] - Les champs à retourner.
+	 * @param {Array<string>|string} [populate="*"] - Les relations à enrichir.
+	 * @param {boolean} [force=false] - Si true, force la requête sans tenir compte du cache.
+	 * @returns {Promise<Array<StrapiObject>>} Une promesse qui résout avec un tableau d'objets Strapi.
 	 */
 	list(filters, fields, populate = "*", force) {
 		let url = this.api.setUrl(this.name, filters, fields, populate);
@@ -64,11 +57,11 @@ module.exports = class StrapiCollection {
 	}
 
 	/**
-	 * Recuperer un  element spécifique
-	 * @param {String} id 
-	 * @param {Object || String || Undefined} populate 
-	 * @param {Boolean} force 
-	 * @returns 
+	 * Récupère un élément spécifique par son ID.
+	 * @param {string} id - L'ID de l'élément.
+	 * @param {Array<string>|string} [populate="*"] - Les relations à enrichir.
+	 * @param {boolean} [force=false] - Si true, force la requête sans tenir compte du cache.
+	 * @returns {Promise<StrapiObject>} Une promesse qui résout avec l'objet Strapi.
 	 */
 	get(id, populate = "*", force) {
 		let url = this.api.setUrl(`${this.name}/${id}`, undefined, undefined, populate);
@@ -80,9 +73,9 @@ module.exports = class StrapiCollection {
 	}
 
 	/**
-	 * Creer un object dans la base de données
-	 * @param {*} body 
-	 * @returns 
+	 * Crée un nouvel élément dans la collection.
+	 * @param {Object} body - Le corps de l'élément à créer.
+	 * @returns {Promise<StrapiObject>} Une promesse qui résout avec le nouvel objet Strapi.
 	 */
 	create(body) {
 		let url = this.api.setUrl(`${this.name}`);
@@ -99,6 +92,11 @@ module.exports = class StrapiCollection {
 		});
 	}
 
+	/**
+	 * Supprime un élément de la collection.
+	 * @param {string} id - L'ID de l'élément à supprimer.
+	 * @returns {Promise<StrapiObject>} Une promesse qui résout avec l'objet Strapi supprimé.
+	 */
 	delete(id) {
 		let url = this.api.setUrl(`${this.name}/${id}`);
 		return this.api.DELETE(url).then((response) => {
@@ -116,6 +114,13 @@ module.exports = class StrapiCollection {
 		});
 	}
 
+	/**
+	 * Compare les entrées d'un objet avec un autre objet.
+	 * @param {Object} obj - L'objet à comparer.
+	 * @param {Object} entries - Les entrées à comparer.
+	 * @returns {boolean} `true` si les entrées sont identiques, sinon `false`.
+	 * @private
+	 */
 	compareEntries(obj, entries) {
 		for (let i in entries) {
 			if (obj[i] !== entries[i]) return false;
@@ -123,6 +128,12 @@ module.exports = class StrapiCollection {
 		return true;
 	}
 
+	/**
+	 * Met à jour un élément de la collection.
+	 * @param {string} id - L'ID de l'élément à mettre à jour.
+	 * @param {Object} body - Le corps de l'élément à mettre à jour.
+	 * @returns {Promise<StrapiObject>} Une promesse qui résout avec l'objet Strapi mis à jour.
+	 */
 	update(id, body) {
 		let url = this.api.setUrl(`${this.name}/${id}`);
 		return this.api.PUT(url, body).then((response) => {
