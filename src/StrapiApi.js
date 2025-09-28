@@ -3,7 +3,18 @@ const axios = require("axios");
 
 const qs = require("qs");
 
+/**
+ * @class StrapiApi
+ * @description Classe pour interagir avec une API Strapi.
+ */
 module.exports = class StrapiApi {
+	/**
+	 * @constructor
+	 * @param {string} baseURL - L'URL de base de l'API Strapi.
+	 * @param {Array<string>} [collections=[]] - La liste des collections à gérer.
+	 * @param {string} [token] - Le token d'authentification.
+	 * @param {string} [prefix="api"] - Le préfixe de l'API.
+	 */
 	constructor(baseURL, collections = [], token, prefix = "api") {
 		this.baseURL = baseURL;
 		this.setCollection(collections);
@@ -15,9 +26,9 @@ module.exports = class StrapiApi {
 	}
 
 	/**
-	 * Définir le token pour les requêtes
-	 * @param {String} token
-	 * @returns {String} token
+	 * Définit le token pour les requêtes.
+	 * @param {string} token - Le token d'authentification.
+	 * @returns {string} Le token défini.
 	 */
 	setToken(token) {
 		this.token = token;
@@ -25,9 +36,9 @@ module.exports = class StrapiApi {
 	}
 
 	/**
-	 * Parametre les collections auquel acceder
-	 * @param {Arrray} collections si pas de tableau fournit, tente de recupérer la liste des collections
-	 * @returns {Object} collections
+	 * Paramètre les collections auxquelles accéder.
+	 * @param {Array<string>} [collections] - Si aucun tableau n'est fourni, tente de récupérer la liste des collections.
+	 * @returns {Promise<Object>} Un objet contenant les collections initialisées.
 	 */
 	async setCollection(collections) {
 		if (!collections) collections = await this.getAllCollectionsName();
@@ -39,12 +50,12 @@ module.exports = class StrapiApi {
 	}
 
 	/**
-	 * Renvoie une url construite avec les options propres a strapi
-	 * @param {String} subUrl url de la requete
-	 * @param {Object} filters filtre de la requete
-	 * @param {Array} fields champs de la requete
-	 * @param {Array} populate Comment la requete doit etre enrichit par d'autres sous-elements
-	 * @returns
+	 * Renvoie une URL construite avec les options propres à Strapi.
+	 * @param {string} subUrl - L'URL de la requête.
+	 * @param {Object} [filters] - Les filtres de la requête.
+	 * @param {Array<string>} [fields] - Les champs de la requête.
+	 * @param {Array<string>|object} [populate] - Comment la requête doit être enrichie par d'autres sous-éléments.
+	 * @returns {string} L'URL formatée.
 	 */
 	setUrl(subUrl, filters, fields, populate) {
 		return `${subUrl.replace(/([a-z])([A-Z])/g, "$1-$2")}?${qs.stringify(
@@ -54,20 +65,20 @@ module.exports = class StrapiApi {
 	}
 
 	/**
-	 * Renvoie le header avec le token
-	 * @returns {Object} token
+	 * Renvoie le header avec le token.
+	 * @returns {Object} Le header d'authentification.
 	 */
 	getHeader() {
 		return { Authorization: `Bearer ${this.token}` };
 	}
 
 	/**
-	 * Focntion de requete multifonction avec stockage en cache des requete get
-	 * @param {String} url Url de la requete
-	 * @param {String} method Methode de la requete
-	 * @param {Object} data Données de la requete
-	 * @param {Boolean} force default = false. Si true, force la requete sans tenir compte du cache
-	 * @returns {Promise}
+	 * Fonction de requête multifonction avec stockage en cache des requêtes GET.
+	 * @param {string} url - L'URL de la requête.
+	 * @param {string} method - La méthode de la requête (GET, POST, PUT, DELETE).
+	 * @param {Object} [data] - Les données de la requête.
+	 * @param {boolean} [force=false] - Si true, force la requête sans tenir compte du cache.
+	 * @returns {Promise<Object>} La réponse de la requête.
 	 */
 	async request(url, method, data, force) {
 		if (this.logRequest[method + url] && !force && method == "get")
@@ -85,48 +96,48 @@ module.exports = class StrapiApi {
 	}
 
 	/**
-	 * Requete de recupération de données
-	 * @param {String} url
-	 * @param {Boolean} force
-	 * @returns
+	 * Requête de récupération de données (GET).
+	 * @param {string} url - L'URL de la requête.
+	 * @param {boolean} [force=false] - Si true, force la requête sans tenir compte du cache.
+	 * @returns {Promise<Object>} La réponse de la requête.
 	 */
 	async get(url, force) {
 		return this.request(this.prefix + url, "get", undefined, force);
 	}
 
 	/**
-	 * Requete d'envoie de données
-	 * @param {String} url
-	 * @param {Object} body
-	 * @returns
+	 * Requête d'envoi de données (POST).
+	 * @param {string} url - L'URL de la requête.
+	 * @param {Object} body - Le corps de la requête.
+	 * @returns {Promise<Object>} La réponse de la requête.
 	 */
 	async post(url, body) {
 		return this.request(this.prefix + url, "post", { data: body });
 	}
 
 	/**
-	 * Requete de mise a jour de données
-	 * @param {String} url
-	 * @param {Object} body
-	 * @returns
+	 * Requête de mise à jour de données (PUT).
+	 * @param {string} url - L'URL de la requête.
+	 * @param {Object} body - Le corps de la requête.
+	 * @returns {Promise<Object>} La réponse de la requête.
 	 */
 	async put(url, body) {
 		return this.request(this.prefix + url, "put", { data: body });
 	}
 
 	/**
-	 * Requete de supression de données
-	 * @param {String} url
-	 * @param {Object} body
-	 * @returns
+	 * Requête de suppression de données (DELETE).
+	 * @param {string} url - L'URL de la requête.
+	 * @param {Object} [body] - Le corps de la requête.
+	 * @returns {Promise<Object>} La réponse de la requête.
 	 */
 	async delete(url, body) {
 		return this.request(this.prefix + url, "delete", body);
 	}
 
 	/**
-	 * Renvoie la liste des collections disponibles dans la base, sans les collections de base de strapi
-	 * @returns {Array} Promise d'array du nom des collections disponibles
+	 * Renvoie la liste des collections disponibles dans la base, sans les collections de base de Strapi.
+	 * @returns {Promise<Array<string>>} Une promesse qui résout avec un tableau des noms de collections disponibles.
 	 */
 	getAllCollectionsName() {
 		let notCollection = [
@@ -152,8 +163,8 @@ module.exports = class StrapiApi {
 	}
 
 	/**
-	 * Recuperer la totalité des données dans les collections qui ont été définis
-	 * @returns {Object} Promise d'object de la totalité des données
+	 * Récupère la totalité des données dans les collections qui ont été définies.
+	 * @returns {Promise<Object>} Une promesse qui résout avec un objet de la totalité des données.
 	 */
 	async getAllData() {
 		let result = {};
@@ -162,11 +173,11 @@ module.exports = class StrapiApi {
 	}
 
 	/**
-	 * Requete de registration d'un utilisateur
-	 * @param {String} username
-	 * @param {String} email
-	 * @param {String} password
-	 * @returns
+	 * Requête de registration d'un utilisateur.
+	 * @param {string} username - Le nom d'utilisateur.
+	 * @param {string} email - L'email de l'utilisateur.
+	 * @param {string} password - Le mot de passe de l'utilisateur.
+	 * @returns {Promise<Object>} La réponse de la requête.
 	 */
 	register(username, email, password) {
 		return this.post("auth/local/register", {
@@ -177,10 +188,10 @@ module.exports = class StrapiApi {
 	}
 
 	/**
-	 * Requete de login d'un utilisateur qui ajoute le token renvoyé
-	 * @param {*} identifier
-	 * @param {*} password
-	 * @returns
+	 * Requête de login d'un utilisateur qui ajoute le token renvoyé.
+	 * @param {string} identifier - L'identifiant de l'utilisateur (username ou email).
+	 * @param {string} password - Le mot de passe de l'utilisateur.
+	 * @returns {Promise<Object>} La réponse de la requête.
 	 */
 	login(identifier, password) {
 		return this.request(this.prefix + "auth/local", "post", {
@@ -204,7 +215,7 @@ module.exports = class StrapiApi {
 	/**
 	 * Demande de réinitialisation du mot de passe
 	 * @param {String} email
-	 * @returns
+	 * @returns {Promise<Object>} La réponse de la requête.
 	 */
 	forgotPassword(email) {
 		return this.post("auth/forgot-password", {
@@ -217,7 +228,7 @@ module.exports = class StrapiApi {
 	 * @param {String} code
 	 * @param {String} password
 	 * @param {String} passwordConfirmation
-	 * @returns
+	 * @returns {Promise<Object>} La réponse de la requête.
 	 */
 	resetPassword(code, password, passwordConfirmation) {
 		return this.post("auth/reset-password", {
@@ -229,7 +240,7 @@ module.exports = class StrapiApi {
 
 	/**
 	 * Récupère les informations de l'utilisateur actuellement authentifié
-	 * @returns
+	 * @returns {Promise<Object>} La réponse de la requête.
 	 */
 	getMe() {
 		return this.get("users/me");
