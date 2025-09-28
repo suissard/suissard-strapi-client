@@ -5,7 +5,7 @@ A simple JavaScript library for interacting with the Strapi API.
 ## Installation
 
 ```bash
-npm install strapi-api-js
+npm install suissard-strapi-api-js
 ```
 
 ## Usage

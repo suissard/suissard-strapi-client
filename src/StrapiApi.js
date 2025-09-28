@@ -62,7 +62,7 @@ module.exports = class StrapiApi {
 	}
 
 	/**
-	 * Focntion de requete multifonction avec stockage en cache des requete GET
+	 * Focntion de requete multifonction avec stockage en cache des requete get
 	 * @param {String} url Url de la requete
 	 * @param {String} method Methode de la requete
 	 * @param {Object} data Données de la requete
@@ -70,7 +70,7 @@ module.exports = class StrapiApi {
 	 * @returns {Promise}
 	 */
 	async request(url, method, data, force) {
-		if (this.logRequest[method + url] && !force && method == "GET")
+		if (this.logRequest[method + url] && !force && method == "get")
 			return this.logRequest[method + url];
 		let result = await this.axios({
 			url,
@@ -90,8 +90,8 @@ module.exports = class StrapiApi {
 	 * @param {Boolean} force
 	 * @returns
 	 */
-	async GET(url, force) {
-		return this.request(this.prefix + url, "GET", undefined, force);
+	async get(url, force) {
+		return this.request(this.prefix + url, "get", undefined, force);
 	}
 
 	/**
@@ -100,8 +100,8 @@ module.exports = class StrapiApi {
 	 * @param {Object} body
 	 * @returns
 	 */
-	async POST(url, body) {
-		return this.request(this.prefix + url, "POST", { data: body });
+	async post(url, body) {
+		return this.request(this.prefix + url, "post", { data: body });
 	}
 
 	/**
@@ -110,8 +110,8 @@ module.exports = class StrapiApi {
 	 * @param {Object} body
 	 * @returns
 	 */
-	async PUT(url, body) {
-		return this.request(this.prefix + url, "PUT", { data: body });
+	async put(url, body) {
+		return this.request(this.prefix + url, "put", { data: body });
 	}
 
 	/**
@@ -120,8 +120,8 @@ module.exports = class StrapiApi {
 	 * @param {Object} body
 	 * @returns
 	 */
-	async DELETE(url, body) {
-		return this.request(this.prefix + url, "DELETE", body);
+	async delete(url, body) {
+		return this.request(this.prefix + url, "delete", body);
 	}
 
 	/**
@@ -169,7 +169,7 @@ module.exports = class StrapiApi {
 	 * @returns
 	 */
 	register(username, email, password) {
-		return this.POST("auth/local/register", {
+		return this.post("auth/local/register", {
 			username,
 			email,
 			password,
@@ -183,7 +183,7 @@ module.exports = class StrapiApi {
 	 * @returns
 	 */
 	login(identifier, password) {
-		return this.request(this.prefix + "auth/local", "POST", {
+		return this.request(this.prefix + "auth/local", "post", {
 			identifier,
 			password,
 		}).then((response) => {
@@ -207,7 +207,7 @@ module.exports = class StrapiApi {
 	 * @returns
 	 */
 	forgotPassword(email) {
-		return this.POST("auth/forgot-password", {
+		return this.post("auth/forgot-password", {
 			email,
 		});
 	}
@@ -220,7 +220,7 @@ module.exports = class StrapiApi {
 	 * @returns
 	 */
 	resetPassword(code, password, passwordConfirmation) {
-		return this.POST("auth/reset-password", {
+		return this.post("auth/reset-password", {
 			code,
 			password,
 			passwordConfirmation,
@@ -232,6 +232,6 @@ module.exports = class StrapiApi {
 	 * @returns
 	 */
 	getMe() {
-		return this.GET("users/me");
+		return this.get("users/me");
 	}
 };

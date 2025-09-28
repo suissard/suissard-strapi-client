@@ -36,7 +36,7 @@ module.exports = class StrapiCollection {
 	list(filters, fields, populate = "*", force) {
 		let url = this.api.setUrl(this.name, filters, fields, populate);
 		return this.api
-			.GET(url + "&pagination[page]=1&pagination[pageSize]=100", force)
+			.get(url + "&pagination[page]=1&pagination[pageSize]=100", force)
 			.then(async (response) => {
 				let result = [];
 
@@ -54,7 +54,7 @@ module.exports = class StrapiCollection {
 				getListPage(response)
 
 				for (let i=1; i < response.data.meta.pagination.pageCount; i++) {
-					response = await this.api.GET(url + `&pagination[page]=${i+1}&pagination[pageSize]=100`, force)
+					response = await this.api.get(url + `&pagination[page]=${i+1}&pagination[pageSize]=100`, force)
 					getListPage(response)
 
 				}
@@ -72,7 +72,7 @@ module.exports = class StrapiCollection {
 	 */
 	get(id, populate = "*", force) {
 		let url = this.api.setUrl(`${this.name}/${id}`, undefined, undefined, populate);
-		return this.api.GET(url, force).then((response) => {
+		return this.api.get(url, force).then((response) => {
 			let obj = new StrapiObject(id, this.name, response?.data.data.attributes, this);
 			this.cache.set(obj.getID(), obj);
 			return obj;
@@ -86,7 +86,7 @@ module.exports = class StrapiCollection {
 	 */
 	create(body) {
 		let url = this.api.setUrl(`${this.name}`);
-		return this.api.POST(url, body).then((response) => {
+		return this.api.post(url, body).then((response) => {
 			if (!response?.data?.data) return;
 			let obj = new StrapiObject(
 				String(response.data.data.id),
@@ -101,7 +101,7 @@ module.exports = class StrapiCollection {
 
 	delete(id) {
 		let url = this.api.setUrl(`${this.name}/${id}`);
-		return this.api.DELETE(url).then((response) => {
+		return this.api.delete(url).then((response) => {
 			if (!response?.data?.data) return;
 			let obj = this.cache.get(String(id));
 			if (obj) {
@@ -125,7 +125,7 @@ module.exports = class StrapiCollection {
 
 	update(id, body) {
 		let url = this.api.setUrl(`${this.name}/${id}`);
-		return this.api.PUT(url, body).then((response) => {
+		return this.api.put(url, body).then((response) => {
 			if (!response?.data?.data) return;
 			let obj = this.cache.get(String(id));
 			if (obj && !this.compareEntries(obj, body)) {
