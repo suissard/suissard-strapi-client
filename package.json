@@ -1,23 +1,16 @@
 {
   "name": "suissard-strapi-client",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "",
   "keywords": [
     "strapi",
     "data"
   ],
   "author": "@suissard <clavier.jeremy@gmail.com>",
-  "main": "dist/strapi-client.js",
-  "module": "dist/strapi-client.mjs",
-  "typings": "dist/strapi-client.d.ts",
   "license": "MIT",
   "engines": {
     "node": ">=18"
   },
-  "files": [
-    "dist",
-    "src"
-  ],
   "publishConfig": {
     "access": "public"
   },
