@@ -69,7 +69,8 @@ module.exports = class StrapiApi {
 	 * @returns {Object} Le header d'authentification.
 	 */
 	getHeader() {
-		return { Authorization: `Bearer ${this.token}` };
+		if (this.token) return { Authorization: `Bearer ${this.token}` }
+		else return {}
 	}
 
 	/**
@@ -77,10 +78,10 @@ module.exports = class StrapiApi {
 	 * @param {string} url - L'URL de la requête.
 	 * @param {string} method - La méthode de la requête (GET, POST, PUT, DELETE).
 	 * @param {Object} [data] - Les données de la requête.
-	 * @param {boolean} [force=false] - Si true, force la requête sans tenir compte du cache.
+	 * @param {boolean} [force=true] - Si true, force la requête sans tenir compte du cache.
 	 * @returns {Promise<Object>} La réponse de la requête.
 	 */
-	async request(url, method, data, force) {
+	async request(url, method, data, force=true) {
 		if (this.logRequest[method + url] && !force && method == "get")
 			return this.logRequest[method + url];
 		let result = await this.axios({
@@ -98,7 +99,7 @@ module.exports = class StrapiApi {
 	/**
 	 * Requête de récupération de données (GET).
 	 * @param {string} url - L'URL de la requête.
-	 * @param {boolean} [force=false] - Si true, force la requête sans tenir compte du cache.
+	 * @param {boolean} [force=true] - Si true, force la requête sans tenir compte du cache.
 	 * @returns {Promise<Object>} La réponse de la requête.
 	 */
 	async get(url, force) {

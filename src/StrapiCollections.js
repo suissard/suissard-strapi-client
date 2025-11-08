@@ -23,7 +23,7 @@ module.exports = class StrapiCollection {
 	 * @param {Object} [filters] - Les filtres à appliquer. Exemple : `{title:{$eq:'Mon deuxieme article'}}`
 	 * @param {Array<string>} [fields] - Les champs à retourner.
 	 * @param {Array<string>|string} [populate="*"] - Les relations à enrichir.
-	 * @param {boolean} [force=false] - Si true, force la requête sans tenir compte du cache.
+	 * @param {boolean} [force=true] - Si true, force la requête sans tenir compte du cache.
 	 * @returns {Promise<Array<StrapiObject>>} Une promesse qui résout avec un tableau d'objets Strapi.
 	 */
 	list(filters, fields, populate = "*", force) {
@@ -60,7 +60,7 @@ module.exports = class StrapiCollection {
 	 * Récupère un élément spécifique par son ID.
 	 * @param {string} id - L'ID de l'élément.
 	 * @param {Array<string>|string} [populate="*"] - Les relations à enrichir.
-	 * @param {boolean} [force=false] - Si true, force la requête sans tenir compte du cache.
+	 * @param {boolean} [force=true] - Si true, force la requête sans tenir compte du cache.
 	 * @returns {Promise<StrapiObject>} Une promesse qui résout avec l'objet Strapi.
 	 */
 	get(id, populate = "*", force) {
