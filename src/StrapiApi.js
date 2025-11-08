@@ -109,11 +109,11 @@ module.exports = class StrapiApi {
 	/**
 	 * Requête d'envoi de données (POST).
 	 * @param {string} url - L'URL de la requête.
-	 * @param {Object} body - Le corps de la requête.
+	 * @param {Object} data - Le corps de la requête.
 	 * @returns {Promise<Object>} La réponse de la requête.
 	 */
-	async post(url, body) {
-		return this.request(this.prefix + url, "post", { data: body });
+	async post(url, data) {
+		return this.request(this.prefix + url, "post", data );
 	}
 
 	/**
