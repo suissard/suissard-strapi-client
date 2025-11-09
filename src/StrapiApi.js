@@ -91,7 +91,7 @@ module.exports = class StrapiApi {
 			headers: this.getHeader(),
 			baseURL: this.baseURL + "/",
 		}).catch((e) => {
-			console.error(e, result)
+			console.error(e)
 		});
 		// console.log(method, url, result);
 		this.logRequest[method.toUpperCase() + url] = result;
@@ -115,7 +115,7 @@ module.exports = class StrapiApi {
 	 * @returns {Promise<Object>} La réponse de la requête.
 	 */
 	async post(url, data) {
-		return this.request(this.prefix + url, "post", data );
+		return this.request(this.prefix + url, "post", { data: data } );
 	}
 
 	/**

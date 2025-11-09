@@ -36,8 +36,8 @@ module.exports = class StrapiCollection {
 				let getListPage = (response) => {
 					for (let i in response?.data.data) {
 						let object = response?.data.data[i];
-						if (object.documentId && object.attributes) {
-							let obj = new StrapiObject(object.documentId, this.name, object.attributes, this);
+						if (object.documentId) {
+							let obj = new StrapiObject(object.documentId, this.name, object, this);
 							this.cache.set(obj.getID(), obj);
 							result.push(obj);
 						}
@@ -66,7 +66,7 @@ module.exports = class StrapiCollection {
 	get(documentId, populate = "*", force) {
 		let url = this.api.setUrl(`${this.name}/${documentId}`, undefined, undefined, populate);
 		return this.api.get(url, force).then((response) => {
-			let obj = new StrapiObject(documentId, this.name, response?.data.data.attributes, this);
+			let obj = new StrapiObject(documentId, this.name, response?.data.data, this);
 			this.cache.set(obj.getID(), obj);
 			return obj;
 		});
@@ -84,7 +84,7 @@ module.exports = class StrapiCollection {
 			let obj = new StrapiObject(
 				String(response.data.data.documentId),
 				this.name,
-				response.data.data.attributes,
+				response.data.data,
 				this
 			);
 			this.cache.set(obj.getID(), obj);
@@ -100,17 +100,12 @@ module.exports = class StrapiCollection {
 	delete(id) {
 		let url = this.api.setUrl(`${this.name}/${id}`);
 		return this.api.delete(url).then((response) => {
-			if (!response?.data?.data) return;
+			// if (!response?.data?.data) return;
 			let obj = this.cache.get(String(id));
 			if (obj) {
 				this.cache.delete(id);
 			}
-			return new StrapiObject(
-				response.data.data.documentId,
-				this.name,
-				response.data.data.attributes,
-				this
-			);
+			return obj
 		});
 	}
 
@@ -145,7 +140,7 @@ module.exports = class StrapiCollection {
 				obj = new StrapiObject(
 					response.data.data.documentId,
 					this.name,
-					response.data.data.attributes,
+					response.data.data,
 					this
 				);
 				this.cache.set(obj.getID(), obj);
