@@ -1,6 +1,6 @@
 module.exports = { 
-    baseURL : 'https://strapi.xekkcorp.eu',
-    collections : ['botsdatas', 'teams', 'sharechannels', 'emotemessages'],
-    token : 'be05cd4527b5301622fd7988e7a3fcc7d07e7dd3259795f20ce56d9582ac7f353d28eded1a4635357cf69690c1b1112c5edc54ecc2eb9d5e84f8821b8d6e65bfacdbe5f96dafe830144771ee4fa4523b89d33dbbb26c296228d0b3505aac41ec9528be398c460432a12eeb360fde29e6db269c620026dc75c735ef90be7ca2f5',
+    baseURL : 'http://192.168.0.2:1337',
+    collections : ['sports', 'events', 'pois'],
+    token : '1b7c2a8ccfd2fedb775cab470bc724695338d7f00b9d14f8b9d9ffd7e6a6e5367228f29cc0663e0a59c0dcd139bd814c8d6e5766e874fd85e585a73ec2063d03987165bd58e9d2c7e430e8f81ce66ae5728a1d8f12af648550008bc63d0240d0150b3d29c599cb3044ed30c85d4012686b23c60e6cbbede73bb6d4fad4615216',
     prefix : 'api'
 }

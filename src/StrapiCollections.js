@@ -36,8 +36,8 @@ module.exports = class StrapiCollection {
 				let getListPage = (response) => {
 					for (let i in response?.data.data) {
 						let object = response?.data.data[i];
-						if (object.id && object.attributes) {
-							let obj = new StrapiObject(object.id, this.name, object.attributes, this);
+						if (object.documentId && object.attributes) {
+							let obj = new StrapiObject(object.documentId, this.name, object.attributes, this);
 							this.cache.set(obj.getID(), obj);
 							result.push(obj);
 						}
@@ -58,15 +58,15 @@ module.exports = class StrapiCollection {
 
 	/**
 	 * Récupère un élément spécifique par son ID.
-	 * @param {string} id - L'ID de l'élément.
+	 * @param {string} documentId - L'ID de l'élément.
 	 * @param {Array<string>|string} [populate="*"] - Les relations à enrichir.
 	 * @param {boolean} [force=true] - Si true, force la requête sans tenir compte du cache.
 	 * @returns {Promise<StrapiObject>} Une promesse qui résout avec l'objet Strapi.
 	 */
-	get(id, populate = "*", force) {
-		let url = this.api.setUrl(`${this.name}/${id}`, undefined, undefined, populate);
+	get(documentId, populate = "*", force) {
+		let url = this.api.setUrl(`${this.name}/${documentId}`, undefined, undefined, populate);
 		return this.api.get(url, force).then((response) => {
-			let obj = new StrapiObject(id, this.name, response?.data.data.attributes, this);
+			let obj = new StrapiObject(documentId, this.name, response?.data.data.attributes, this);
 			this.cache.set(obj.getID(), obj);
 			return obj;
 		});
@@ -82,7 +82,7 @@ module.exports = class StrapiCollection {
 		return this.api.post(url, body).then((response) => {
 			if (!response?.data?.data) return;
 			let obj = new StrapiObject(
-				String(response.data.data.id),
+				String(response.data.data.documentId),
 				this.name,
 				response.data.data.attributes,
 				this
@@ -106,7 +106,7 @@ module.exports = class StrapiCollection {
 				this.cache.delete(id);
 			}
 			return new StrapiObject(
-				response.data.data.id,
+				response.data.data.documentId,
 				this.name,
 				response.data.data.attributes,
 				this
@@ -130,20 +130,20 @@ module.exports = class StrapiCollection {
 
 	/**
 	 * Met à jour un élément de la collection.
-	 * @param {string} id - L'ID de l'élément à mettre à jour.
+	 * @param {string} documentId - L'ID de l'élément à mettre à jour.
 	 * @param {Object} body - Le corps de l'élément à mettre à jour.
 	 * @returns {Promise<StrapiObject>} Une promesse qui résout avec l'objet Strapi mis à jour.
 	 */
-	update(id, body) {
-		let url = this.api.setUrl(`${this.name}/${id}`);
+	update(documentId, body) {
+		let url = this.api.setUrl(`${this.name}/${documentId}`);
 		return this.api.put(url, body).then((response) => {
 			if (!response?.data?.data) return;
-			let obj = this.cache.get(String(id));
+			let obj = this.cache.get(String(documentId));
 			if (obj && !this.compareEntries(obj, body)) {
 				obj.update(body);
 			} else {
 				obj = new StrapiObject(
-					response.data.data.id,
+					response.data.data.documentId,
 					this.name,
 					response.data.data.attributes,
 					this

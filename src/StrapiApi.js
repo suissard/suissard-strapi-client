@@ -90,7 +90,9 @@ module.exports = class StrapiApi {
 			data,
 			headers: this.getHeader(),
 			baseURL: this.baseURL + "/",
-		}).catch((e) => console.error(e));
+		}).catch((e) => {
+			console.error(e, result)
+		});
 		// console.log(method, url, result);
 		this.logRequest[method.toUpperCase() + url] = result;
 		return result;

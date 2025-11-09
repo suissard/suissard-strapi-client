@@ -5,15 +5,15 @@
 module.exports = class StrapiObject {
 	/**
 	 * @constructor
-	 * @param {string} id - L'ID de l'objet.
+	 * @param {string} documentId - L'ID de l'objet.
 	 * @param {string} type - Le type de l'objet (nom de la collection).
 	 * @param {Object} value - Les attributs de l'objet.
 	 * @param {StrapiCollection} collection - L'instance de la collection parente.
 	 */
-	constructor(id, type, value, collection) {
+	constructor(documentId, type, value, collection) {
 		// console.log('StrapiObject', 'id : ' + id, 'type : ' + type, value)
 		Object.defineProperty(this, "getID", {
-			enumerable: false, value: () => String(id)
+			enumerable: false, value: () => String(documentId)
 		});
 
 		Object.defineProperty(this, "getType", {
