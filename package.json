@@ -21,18 +21,21 @@
     "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "semantic-release": "semantic-release --branches main",
     "commit": "git-cz",
-    "test": "vitest"
+    "test": "vitest",
+    "docs": "typedoc"
   },
   "peerDependencies": {
     "axios": "^1.7.2",
     "qs": "^6.12.1"
   },
   "devDependencies": {
+    "@types/axios-mock-adapter": "^1.9.0",
     "@types/node": "^20.12.12",
     "@types/qs": "^6.9.15",
     "@typescript-eslint/eslint-plugin": "^7.8.0",
     "@typescript-eslint/parser": "^7.8.0",
     "axios": "^1.7.2",
+    "axios-mock-adapter": "^2.1.0",
     "cz-conventional-changelog": "^3.3.0",
     "esbuild": "^0.20.2",
     "eslint": "^8.57.0",
@@ -48,6 +51,7 @@
     "rollup-plugin-esbuild": "^6.1.1",
     "semantic-release": "^24.0.0",
     "ts-node": "^10.9.2",
+    "typedoc": "^0.25.13",
     "typescript": "^5.4.5",
     "vitest": "^1.6.0"
   },

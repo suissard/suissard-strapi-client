@@ -1,9 +1,9 @@
 import { describe, test, expect } from "vitest";
-import StrapiApi from '../src/StrapiApi.js';
-import { baseURL, collections, token, prefix } from "./config.js";
+import StrapiApi from '../src/StrapiApi';
+import { baseURL, collections, token, prefix } from "./config";
 
 describe("Authentication", () => {
-    const strapi = new StrapiApi(baseURL, collections, token, prefix);
+    const strapi = new StrapiApi({ baseURL, collections, token, prefix });
 
     // TODO: Implement proper registration test with a new user
     // This test is currently a placeholder because it requires valid user credentials.
