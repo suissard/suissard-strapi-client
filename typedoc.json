@@ -1,0 +1,8 @@
+{
+  "entryPoints": ["./src/index.ts"],
+  "out": "docs",
+  "readme": "none",
+  "theme": "default",
+  "name": "Strapi API Client",
+  "includeVersion": true
+}
