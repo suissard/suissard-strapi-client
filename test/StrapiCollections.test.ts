@@ -8,15 +8,15 @@ describe("StrapiCollections", () => {
 
     let createdObject: any;
 
-    test.skip("compareEntries", () => {
+    test("compareEntries", () => {
         const object1 = { test1: 'test1', test2: 'test2' };
         const entries = { test2: 'test2' };
-        // expect(collection.compareEntries(object1, entries)).toBeTruthy();
-        // expect(collection.compareEntries(object1, { test2: 'test3' })).toBeFalsy();
-        // expect(collection.compareEntries(object1, { test3: 'test3' })).toBeFalsy();
+        expect(collection.compareEntries(object1, entries)).toBeTruthy();
+        expect(collection.compareEntries(object1, { test2: 'test3' })).toBeFalsy();
+        expect(collection.compareEntries(object1, { test3: 'test3' })).toBeFalsy();
     });
 
-    test.skip("create", async () => {
+    test("create", async () => {
         createdObject = await collection.create(testObject);
         await new Promise(resolve => setTimeout(resolve, 200));
 
@@ -25,7 +25,7 @@ describe("StrapiCollections", () => {
         }
     });
 
-    test.skip("list", async () => {
+    test("list", async () => {
         const list = await collection.list();        await new Promise(resolve => setTimeout(resolve, 200));
 
 
@@ -37,7 +37,7 @@ describe("StrapiCollections", () => {
         }
     });
 
-    test.skip("get", async () => {
+    test("get", async () => {
         const object = await collection.get(createdObject.getID());
                 await new Promise(resolve => setTimeout(resolve, 200));
 
@@ -46,7 +46,7 @@ describe("StrapiCollections", () => {
         }
     });
 
-    test.skip("update", async () => {
+    test("update", async () => {
         const newName = updateEntrie[1];
         // testObject[updateEntrie[0]] = newName;
         const updatedObject = await collection.update(createdObject.getID(), { [updateEntrie[0]]: newName });
@@ -57,7 +57,7 @@ describe("StrapiCollections", () => {
         }
     });
 
-    test.skip("delete", async () => {
+    test("delete", async () => {
         const deletedObject = await collection.delete(createdObject.getID());
         await new Promise(resolve => setTimeout(resolve, 200));
 
