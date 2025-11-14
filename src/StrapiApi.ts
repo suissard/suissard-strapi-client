@@ -200,8 +200,16 @@ export default class StrapiApi {
    * @param {StrapiRegisterCredentials} credentials - The user's credentials.
    * @returns {Promise<Object>} La réponse de la requête.
    */
-  register(credentials: StrapiRegisterCredentials): Promise<any> {
-    return this.post("auth/local/register", credentials);
+  async register(credentials: StrapiRegisterCredentials): Promise<any> {
+    const response = await this.request<any>(
+      `${this.prefix}auth/local/register`,
+      "post",
+      credentials
+    );
+    if (response?.jwt) {
+      this.setToken(response.jwt);
+    }
+    return response;
   }
 
   /**
